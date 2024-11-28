@@ -1,4 +1,4 @@
-import { AppWalletProvider as ImportedAppWalletProvider } from "../../components/AppWalletProvider";
+import ImportedAppWalletProvider from "../../components/AppWalletProvider";
  
 export default function RootLayout({
   children,
