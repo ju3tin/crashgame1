@@ -1,4 +1,4 @@
-import { AppWalletProvider } from "../../components/AppWalletProvider";
+import { AppWalletProvider as ImportedAppWalletProvider } from "../../components/AppWalletProvider";
  
 export default function RootLayout({
   children,
@@ -8,8 +8,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppWalletProvider>{children}</AppWalletProvider>
+        <ImportedAppWalletProvider>{children}</ImportedAppWalletProvider>
       </body>
     </html>
   );
 }
+
+export const AppWalletProvider = () => {
+    // component logic
+};
