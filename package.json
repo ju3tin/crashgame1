@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "decimal.js": "^10.4.3",
     "mongodb": "^6.11.0",
     "next": "15.0.3",
