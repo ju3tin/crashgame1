@@ -12,6 +12,10 @@ export default function Address() {
  
   // code for the `getBalanceEvery10Seconds` and useEffect code here
  
+  const getAirdropOnClick = async () => {
+    // Logic to request an airdrop
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-evenly p-24">
       {publicKey ? (
