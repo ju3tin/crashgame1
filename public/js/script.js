@@ -29,11 +29,13 @@ myWs.onmessage = function (message) {
             btnBet.textContent = "PLACE A BET";
             btnBet.disabled = false;
 
-            multiplyLbl.style.color = "rgba(255, 255, 255, 0.4)";
-            multiplyLbl.textContent = "BE READY FOR A ROUND:";
+            multiplyLbl.style.color = "rgba(0, 0, 0, 0.4)";
+            multiplyLbl.style.textAlign = "center"
+            multiplyLbl.innerHTML = "<br /><br />BE READY FOR A ROUND:";
 
-            multiplyStr.style.color = "rgba(255, 255, 255, 0.4)";
+            multiplyStr.style.color = "rgba(0, 0, 0, 0.4)";
             multiplyStr.style.fontSize = "32px";
+            multiplyStr.style.textAlign = "centre"
             multiplyStr.style.left = "-25%";
             multiplyStr.style.position = "relative";
             break;
