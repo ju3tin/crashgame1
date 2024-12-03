@@ -10,7 +10,7 @@ myWs.onmessage = function (message) {
             multiplyStr.textContent = jsonMessage.data;
             break;
           case "CNT_MULTIPLY":
-            multiplyStr.textContent = jsonMessage.data;
+            multiplyStr.textContent = jsonMessage.multiplier;
             break;
           case "CNT_BALANCE":
             balanceStr.textContent = '$' 
