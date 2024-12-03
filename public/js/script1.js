@@ -60,10 +60,10 @@ myWs.onmessage = function (message) {
             multiplyStr.style.fontSize = "44px";
             multiplyStr.style.color ="#C27500";
             break;
-          case "ROUND_ENDS":
+          case "ROUND_CRASHED":
             multiplyStr.style.position = "absolute";
             multiplyStr.textContent =  'x' 
-                                    +  parseFloat(jsonMessage.totalMult).toFixed(3) 
+                                    +  parseFloat(jsonMessage.multiplier).toFixed(3) 
                                     + " - Crashed!";
             btnBet.style.background = "#292C33";
             btnBet.disabled = true;
