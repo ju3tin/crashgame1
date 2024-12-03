@@ -6,8 +6,8 @@ myWs.onmessage = function (message) {
     try {
         const jsonMessage = JSON.parse(message.data);
         switch (jsonMessage.action) {
-          case "SECOND_BEFORE_START":
-            multiplyStr.textContent = jsonMessage.data;
+          case "COUNTDOWN":
+            multiplyStr.textContent = jsonMessage.time;
             break;
           case "CNT_MULTIPLY":
             multiplyStr.textContent = jsonMessage.multiplier;
