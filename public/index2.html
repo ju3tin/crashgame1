@@ -1,9 +1,9 @@
 
+
 <!doctype html>
 <html lang="en">
   <head>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   
+
     <script>
       window.onload = function() {
       
@@ -79,67 +79,7 @@
 
       <div class="row">
         <div style="background-image: url('/images/water.png');min-height:50vh;" class="col-md-8">
-      
-          <div class="w-full mt-10">
-            <canvas id="myChart"></canvas>
-        </div>
-        <script>
-          const ctx = document.getElementById("myChart");
-          const myChart = new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels: [ "Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6" ],
-              datasets: [
-                {
-                  label: "# of points",
-                  data: [0, 0, 0, 0, 0, 0],
-                  backgroundColor: [
-                    "rgba(255, 99, 132, 0.2)",
-                    "rgba(54, 162, 235, 0.2)",
-                    "rgba(255, 206, 86, 0.2)",
-                    "rgba(75, 192, 192, 0.2)",
-                    "rgba(153, 102, 255, 0.2)",
-                    "rgba(255, 159, 64, 0.2)",
-                  ],
-                  borderColor: [
-                    "rgba(255, 99, 132, 1)",
-                    "rgba(54, 162, 235, 1)",
-                    "rgba(255, 206, 86, 1)",
-                    "rgba(75, 192, 192, 1)",
-                    "rgba(153, 102, 255, 1)",
-                    "rgba(255, 159, 64, 1)",
-                  ],
-                  borderWidth: 1,
-                },
-              ],
-            },
-            options: {
-              scales: {
-                y: {
-                  beginAtZero: true,
-                },
-              },
-            },
-          });
-    
-          webSocket = new WebSocket("wss://crashserver.onrender.com");
-          function getCurrentDateTime() {
-    const now = new Date();
-    return Date.now(); 
-    //return now.toISOString().replace('T', ' ').substring(0, 23); // Format: YYYY-MM-DD HH:MM:SS.mmm
-  }
-
-          webSocket.onmessage = function (message) {
-            const data = message.data;
-            console.log(`[${getCurrentDateTime()}] ${data} is this working`)
-            const dataObj = JSON.parse(data);
-            const dataArray = Object.values(dataObj);
-            console.log(dataArray);
-            index = dataArray[0] - 1;
-            myChart.data.datasets[0].data[index] = dataArray[1];
-            myChart.update();
-          };
-        </script>
+          <div id="chartContainer" style="height: 300px; max-width: 920px; margin: 0px auto;z-index: 99999;"></div>
           <div id = "panel1" >
             <div id = "panel1Head">
               <div id = "infoHead" class = "InfoHead" style="text-align: center;">
