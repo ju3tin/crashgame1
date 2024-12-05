@@ -7,48 +7,7 @@
     <script>
       window.onload = function() {
       
-      var dataPoints = [];
-      
-      var chart = new CanvasJS.Chart("chartContainer", {
-        theme: "light2",
-        title: {
-          text: "Hooked"
-        },
-        backgroundColor: "rgba(255, 255, 255, .0)",
-        data: [{
-          type: "line",
-          dataPoints: dataPoints
-        }]
-      });
-      updateData();
-      
-      // Initial Values
-      var xValue = 0;
-      var yValue = 1;
-      var newDataCount = 3;
-      
-      function addData(data) {
-        if(newDataCount != 1) {
-          $.each(data, function(key, value) {
-            dataPoints.push({x: value[0], y: parseInt(value[1])});
-            xValue++;
-            yValue = parseInt(value[1]);
-          });
-        } else {
-          //dataPoints.shift();
-          dataPoints.push({x: data[0][0], y: parseInt(data[0][1])});
-          xValue++;
-          yValue = parseInt(data[0][1]);
-        }
-        
-        newDataCount = 1;
-        chart.render();
-        setTimeout(updateData, 1500);
-      }
-      
-      function updateData() {
-        $.getJSON("https://canvasjs.com/services/data/datapoints.php?xstart="+xValue+"&ystart="+yValue+"&length="+newDataCount+"type=json", addData);
-      }
+     
       
       }
       </script>
@@ -84,6 +43,7 @@
             <canvas id="myChart"></canvas>
         </div>
         <script>
+          var dude1;
           const ctx = document.getElementById("myChart");
           const myChart = new Chart(ctx, {
             type: "bar",
@@ -129,10 +89,74 @@
     //return now.toISOString().replace('T', ' ').substring(0, 23); // Format: YYYY-MM-DD HH:MM:SS.mmm
   }
 
+  function getCurrentTimestamp(){
+    const now = new Date();
+    return Date.now(); 
+    
+
+  }
+
           webSocket.onmessage = function (message) {
             const data = message.data;
-            console.log(`[${getCurrentDateTime()}] ${data} is this working`)
-            const dataObj = JSON.parse(data);
+            let datatimefirst;
+            let datatimesecond;
+            if (data.action === "CNT_MULTIPLY") {
+      console.log(`[${getCurrentTimestamp()}] Multiplier: ${data.multiplier}`+ "fuck this"); // Log the multiplier
+      // Update the chart with the new multiplier
+    //  myChart.data.datasets[0].data.push(data.multiplier); // Assuming you want to add the multiplier to the chart
+  //    myChart.update(); // Update the chart
+    }
+           // console.log(`[${getCurrentDateTime()}] ${data} is this working`)
+            
+           datatimesecond = 0; // Assign the current timestamp to the global variable
+
+
+
+           if (data.includes("ROUND_STARTED")){
+
+            datatimefirst = getCurrentTimestamp();
+          //  console.log(datatimefirst+ "it worked")
+
+            datatimesecond = parseInt(datatimefirst, 10);
+             dude1 = datatimesecond
+           
+           }
+          console.log(dude1);
+
+           if (data.includes("CNT_MULTIPLY")) {
+      const data1 = JSON.parse(data); // Parse the JSON string
+      let dataString = message.data; // Get the incoming message as a string
+   
+      const dataIndex = dataString.indexOf("data");
+      const dataString1 = data.substring(dataIndex);
+      const firstQuoteIndex = dataString1.indexOf('"');
+    const secondQuoteIndex = dataString1.indexOf('"', firstQuoteIndex + 1);
+    
+    if (secondQuoteIndex !== -1) {
+      dataString = dataString1.substring(secondQuoteIndex + 1); // Keep everything from the second quote onwards
+    }
+
+    const lastQuoteIndex = dataString.lastIndexOf('"');
+    
+    if (lastQuoteIndex !== -1) {
+      dataString = dataString.substring(0, lastQuoteIndex); // Keep everything up to the last quote
+    }
+    dataString = dataString.replace(/x/g, ''); // Use a regular expression to replace all "x" with an empty string
+    const dataInteger = parseInt(dataString, 10); // Convert to integer with base 10
+
+
+      console.log(`${getCurrentTimestamp()} Multiplier: ${dataString}`); // Log the multiplier
+      // Update the chart with the new multiplier
+      myChart.data.datasets[0].data.push(dataString); // Assuming you want to add the multiplier to the chart
+      myChart.update(); // Update the chart
+    }
+    // Handle other actions if necessary
+  ;
+
+
+
+
+           const dataObj = JSON.parse(data);
             const dataArray = Object.values(dataObj);
             console.log(dataArray);
             index = dataArray[0] - 1;
@@ -187,6 +211,4 @@
     </div> <!-- /container -->
   </body>
   <script type = "text/javascript" src = "js/script.js"></script>
-  <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-<script src="https://cdn.canvasjs.com/jquery.canvasjs.min.js"></script>
 </html>
