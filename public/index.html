@@ -1,15 +1,135 @@
-
 <!doctype html>
 <html lang="en">
   <head>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script>
-      window.onload = function() {
+      var chart;
+      var dataPoints = []; // Initialize dataPoints globally
+      var jsonData; // Declare a global variable for JSON data
+
+window.onload = function() {
+
+  
+    function dude1() {
+  var flickerAPI = "https://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
+  $.getJSON( flickerAPI, {
+    tags: "mount rainier",
+    tagmode: "any",
+    format: "json"
+  })
+    .done(function( data ) {
+      $.each( data.items, function( i, item ) {
+        $( "<img>" ).attr( "src", item.media.m ).appendTo( "#images" );
+        if ( i === 3 ) {
+          return false;
+        }
+      });
+    });
+};
+    // Initialize the chart
+    dude1();
+    createChart(); // Call the function to create the chart
+    updateData(); // Call to update data after chart initialization
+
+    // Initial Values
+    var xValue = 0;
+    var yValue = 1;
+    var newDataCount = 3;
+
+    function addData(data) {
+        // Assuming data is an array of objects with x and y properties
+        $.each(data, function(key, value) {
+            dataPoints.push({ x: value.x, y: value.y });
+            xValue++;
+            yValue = value.y; // Update yValue to the last y value
+        });
+
+        newDataCount = 1; // Set newDataCount to 1 for the next update
+        chart.render(); // Render the chart with updated data
+        setTimeout(updateData, 1500); // Schedule the next data update
+    }
+
+    function updateData() {
+        // Fetch data from the local JSON file and assign it to the global variable
+        $.getJSON("data.json", function(data) {
+            jsonData = data; // Assign fetched data to the global variable
+            addData(jsonData); // Call addData with the fetched JSON data
+        })
+        .fail(function() {
+            console.log("Error loading JSON data.");
+        });
+    }
+
+    // Function to create a new chart
+    function createChart() {
+        if (chart) {
+            chart.destroy(); // Destroy the existing chart if it exists
+        }
+
+        // Initialize the chart
+        chart = new CanvasJS.Chart("chartContainer", {
+            theme: "light2",
+            title: {
+                text: "Hooked"
+            },
+            backgroundColor: "rgba(255, 255, 255, .0)",
+            data: [{
+                type: "line",
+                dataPoints: dataPoints
+            }]
+        });
+    }
+
+    // Function to reset dataPoints and recreate the chart
+    function resetDataPoints() {
+        dataPoints = []; // Reset the dataPoints array to an empty array
+        console.log("Data points have been reset.");
+        createChart(); // Recreate the chart after resetting data points
+        chart.render(); // Render the new chart
+    }
+
+    // Function to log current data points
+    function logCurrentData() {
+        console.log("Current Data Points:", dataPoints);
+    }
+
+    // Function to modify data points
+    function modifyData() {
+        // Example: Change the y value of the first data point
+        if (dataPoints.length > 0) {
+            dataPoints[0].y += 10; // Increase the y value of the first point by 10
+            console.log("Modified Data Points:", dataPoints);
+            chart.render(); // Re-render the chart to reflect changes
+        } else {
+            console.log("No data points to modify.");
+        }
+    }
+
+    // Function to handle the ROUND_ENDED action
+    function handleRoundEnded() {
+        console.log("Round has ended. Handling cleanup or updates.");
+        resetDataPoints(); // Call to reset data points
+    }
+
+    // WebSocket message handler
+    myWs.onmessage = function (message) {
+        try {
+            const jsonMessage = JSON.parse(message.data);
+            switch (jsonMessage.action) {
+                // ... other cases ...
+                case "ROUND_ENDED":
+                    handleRoundEnded(); // Call the function when ROUND_ENDED is received
+                    break;
+                // ... other cases ...
+            }
+        } catch (error) {
+            console.log('Error', error);
+        }
+    };
+}
       
-     
       
-      }
       </script>
       <style>
         .canvasjs-chart-credit{
@@ -38,132 +158,7 @@
 
       <div class="row">
         <div style="background-image: url('/images/water.png');min-height:50vh;" class="col-md-8">
-      
-          <div class="w-full mt-10">
-            <canvas id="myChart"></canvas>
-        </div>
-        <script>
-          var dude1;
-          const ctx = document.getElementById("myChart");
-          const myChart = new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels: [ "Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6" ],
-              datasets: [
-                {
-                  label: "# of points",
-                  data: [0, 0, 0, 0, 0, 0],
-                  backgroundColor: [
-                    "rgba(255, 99, 132, 0.2)",
-                    "rgba(54, 162, 235, 0.2)",
-                    "rgba(255, 206, 86, 0.2)",
-                    "rgba(75, 192, 192, 0.2)",
-                    "rgba(153, 102, 255, 0.2)",
-                    "rgba(255, 159, 64, 0.2)",
-                  ],
-                  borderColor: [
-                    "rgba(255, 99, 132, 1)",
-                    "rgba(54, 162, 235, 1)",
-                    "rgba(255, 206, 86, 1)",
-                    "rgba(75, 192, 192, 1)",
-                    "rgba(153, 102, 255, 1)",
-                    "rgba(255, 159, 64, 1)",
-                  ],
-                  borderWidth: 1,
-                },
-              ],
-            },
-            options: {
-              scales: {
-                y: {
-                  beginAtZero: true,
-                },
-              },
-            },
-          });
-    
-          webSocket = new WebSocket("wss://crashserver.onrender.com");
-          function getCurrentDateTime() {
-    const now = new Date();
-    return Date.now(); 
-    //return now.toISOString().replace('T', ' ').substring(0, 23); // Format: YYYY-MM-DD HH:MM:SS.mmm
-  }
-
-  function getCurrentTimestamp(){
-    const now = new Date();
-    return Date.now(); 
-    
-
-  }
-
-          webSocket.onmessage = function (message) {
-            const data = message.data;
-            let datatimefirst;
-            let datatimesecond;
-            if (data.action === "CNT_MULTIPLY") {
-      console.log(`[${getCurrentTimestamp()}] Multiplier: ${data.multiplier}`+ "fuck this"); // Log the multiplier
-      // Update the chart with the new multiplier
-    //  myChart.data.datasets[0].data.push(data.multiplier); // Assuming you want to add the multiplier to the chart
-  //    myChart.update(); // Update the chart
-    }
-           // console.log(`[${getCurrentDateTime()}] ${data} is this working`)
-            
-           datatimesecond = 0; // Assign the current timestamp to the global variable
-
-
-
-           if (data.includes("ROUND_STARTED")){
-
-            datatimefirst = getCurrentTimestamp();
-          //  console.log(datatimefirst+ "it worked")
-
-            datatimesecond = parseInt(datatimefirst, 10);
-             dude1 = datatimesecond
-           
-           }
-          console.log(dude1);
-
-           if (data.includes("CNT_MULTIPLY")) {
-      const data1 = JSON.parse(data); // Parse the JSON string
-      let dataString = message.data; // Get the incoming message as a string
-   
-      const dataIndex = dataString.indexOf("data");
-      const dataString1 = data.substring(dataIndex);
-      const firstQuoteIndex = dataString1.indexOf('"');
-    const secondQuoteIndex = dataString1.indexOf('"', firstQuoteIndex + 1);
-    
-    if (secondQuoteIndex !== -1) {
-      dataString = dataString1.substring(secondQuoteIndex + 1); // Keep everything from the second quote onwards
-    }
-
-    const lastQuoteIndex = dataString.lastIndexOf('"');
-    
-    if (lastQuoteIndex !== -1) {
-      dataString = dataString.substring(0, lastQuoteIndex); // Keep everything up to the last quote
-    }
-    dataString = dataString.replace(/x/g, ''); // Use a regular expression to replace all "x" with an empty string
-    const dataInteger = parseInt(dataString, 10); // Convert to integer with base 10
-
-
-      console.log(`${getCurrentTimestamp()} Multiplier: ${dataString}`); // Log the multiplier
-      // Update the chart with the new multiplier
-      myChart.data.datasets[0].data.push(dataString); // Assuming you want to add the multiplier to the chart
-      myChart.update(); // Update the chart
-    }
-    // Handle other actions if necessary
-  ;
-
-
-
-
-           const dataObj = JSON.parse(data);
-            const dataArray = Object.values(dataObj);
-            console.log(dataArray);
-            index = dataArray[0] - 1;
-            myChart.data.datasets[0].data[index] = dataArray[1];
-            myChart.update();
-          };
-        </script>
+          <div id="chartContainer" style="height: 300px; max-width: 920px; margin: 0px auto;z-index: 99999; display: none;"></div>
           <div id = "panel1" >
             <div id = "panel1Head">
               <div id = "infoHead" class = "InfoHead" style="text-align: center;">
@@ -211,4 +206,6 @@
     </div> <!-- /container -->
   </body>
   <script type = "text/javascript" src = "js/script.js"></script>
+  <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script src="https://cdn.canvasjs.com/jquery.canvasjs.min.js"></script>
 </html>
